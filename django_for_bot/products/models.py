@@ -13,7 +13,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Product(models.Model):
+
     product_name = models.CharField(verbose_name='Book`s name', null=False, max_length=50)
     description = models.TextField(verbose_name='Book`s description', null=False)
     price = models.PositiveIntegerField(verbose_name='Book`s price')
@@ -24,5 +26,7 @@ class Product(models.Model):
 
     class Meta:
         verbose_name_plural = "Products"
+
     def __str__(self):
+
         return self.product_name
