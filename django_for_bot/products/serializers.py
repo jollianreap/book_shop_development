@@ -3,7 +3,13 @@ from .models import Category, Product
 
 
 class ProductFieldSerializer(ModelSerializer):
+
     class Meta:
         model = Product
-        fields = ("product_name", "price", "category")
+        fields = "__all__"
 
+
+class CategoryFieldSerializer(ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
