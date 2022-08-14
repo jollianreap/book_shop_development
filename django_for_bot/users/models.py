@@ -13,14 +13,14 @@ class AdminUser(AbstractUser):  # Special model for admins
         return f'#{self.telegram_id} | {self.username}'
 
 
-class User(AbstractBaseUser):  # Model for ordinary users
+class User(models.Model):  # Model for ordinary users
 
     telegram_id = models.PositiveIntegerField(verbose_name="Telegram user id", unique=True,
                                               blank=False, primary_key=True)
-    username = models.CharField(verbose_name='Telegram username', max_length=60)
+    username = models.CharField(verbose_name='Telegram username', max_length=60, blank=False)
     created_at = models.DateTimeField(verbose_name='Time of creation', auto_now_add=True)
 
-    USERNAME_FIELD = 'telegram_id'
+
 
     class Meta:
         verbose_name_plural = "OrdinaryUsers"
