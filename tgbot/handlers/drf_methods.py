@@ -1,49 +1,49 @@
 from typing import Union
 
 from aiogram import Dispatcher
-from aiogram.types import Message, CallbackQuery
-from ..keyboards.reply import main_keyboard
-from ..keyboards.inline import books_keyboard, menu_cd, book_keyboard
+from aiogram.types import CallbackQuery
+
+from ..keyboards.inline import category_keyboard, books_keyboard ,menu_cd
 import requests
 # Dispatcher.message_handler()
 URL = "http://127.0.0.1:8000/api/"
 
 
-async def get_all_books(message: Message):
+async def get_all_categories(message: CallbackQuery):
 
-    await list_books(message)
+    await list_categories(message)
 
     # await message.reply(all_books)
 
 
-async def list_books(message: Union[CallbackQuery, Message], **kwargs):
-    markup = await books_keyboard()
+async def list_categories(message: CallbackQuery, **kwargs):
+    markup = await category_keyboard()
+    categories = [category.get('name') for category in requests.get(f'{URL}all_category/').json()]
 
-    await message.reply(f"Вот что у нас есть\n\n\n", reply_markup=markup)
+    indexed_list = {}
+
+    new_list = [indexed_list.__setitem__(item, i) for i, item in enumerate(categories, start=0)]
+    text = "Категории: \n"
+    for k, v in indexed_list.items():
+        text += f'{v} {k}\n'
+
+    await message.message.reply(text, reply_markup=markup)
 
 
-async def certain_book(callback: CallbackQuery, product_id, **kwargs):
-    markup = await book_keyboard(product_id=product_id, **kwargs)
-
-    book = requests.get(f'{URL}/filter_product/{product_id}').json()
-
-    text = f"""
-        Название: {book.get('name')} \n
-        Описание: {book.get('description')} \n
-        Кол-во на складе: {book.get('quantity')} \n
-        Цена: {book.get('price')}
-    """
-
-    await callback.message.edit_text(text=text, reply_markup=markup)
-
+# async def list_books(message: CallbackQuery, category_id, **kwargs):
+#     markup = await books_keyboard(category_id=category_id)
+#     books = [book.get('author_name',
+#                       'product_name') for book in requests.get(f'{URL}/filter_category/{category_id}').json()]
+#     print(books)
+#
 
 async def navigate(call: CallbackQuery, callback_data: dict):
     current_level = callback_data.get('level')
-    product_id = callback_data.get('product_id')
+    category_id = callback_data.get('category_id')
 
     levels = {
-        "0": list_books,
-        "1": certain_book
+        "0": list_categories,
+        # "1": list_books
 
     }
 
@@ -51,19 +51,10 @@ async def navigate(call: CallbackQuery, callback_data: dict):
 
     await current_level_function(
         call,
-        product_id=product_id
+        category_id=category_id
     )
 
 
 def register_all_books(dp: Dispatcher):
-    dp.register_message_handler(get_all_books, state='*', text="Все книги📚")
+    dp.register_callback_query_handler(get_all_categories, state='*', text_contains="all_books")
     dp.register_callback_query_handler(menu_cd.filter())
-
-
-
-#
-# План работы :
-# 1. Добавить возможность перехода из категории
-# 2. Нажимая на книгу, показывать все её параметры в бд
-# 3. Добавить в Product: author, накатить миграции
-# 4. Начать делать поиск по названию и автору
