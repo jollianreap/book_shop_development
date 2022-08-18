@@ -15,7 +15,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-
+    author_name = models.CharField(max_length=64, unique=False, blank=False)
     product_name = models.CharField(verbose_name='Book`s name', null=False, max_length=50)
     description = models.TextField(verbose_name='Book`s description', null=False)
     price = models.PositiveIntegerField(verbose_name='Book`s price')
