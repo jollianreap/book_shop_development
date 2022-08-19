@@ -19,7 +19,7 @@ class Product(models.Model):
     product_name = models.CharField(verbose_name='Book`s name', null=False, max_length=50)
     description = models.TextField(verbose_name='Book`s description', null=False)
     price = models.PositiveIntegerField(verbose_name='Book`s price')
-    # image = models.ImageField(upload_to='images', blank=True)
+    image = models.ImageField(verbose_name="Book`s image", upload_to='shop_images', blank=True)
     quantity = models.PositiveIntegerField(verbose_name='Book`s quantity', default=0)
 
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
